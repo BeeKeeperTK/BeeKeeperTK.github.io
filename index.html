@@ -1,337 +1,245 @@
 <!DOCTYPE html>
-<html lang="en-us">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Vessel (베셀) — 2D Top-Down Action RPG Prototype</title>
-    <link rel="shortcut icon" href="TemplateData/favicon.ico">
-    <link rel="stylesheet" href="TemplateData/style.css">
-    <style>
-      /* Override Unity template CSS */
-      html, body {
-        width: 100% !important;
-        height: auto !important;
-        min-height: 100vh !important;
-        overflow-y: auto !important;
-        overflow-x: hidden !important;
-        background: #0e1117 !important;
-        color: #c9d1d9 !important;
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
-        line-height: 1.6 !important;
-        padding: 0 !important;
-        margin: 0 !important;
-      }
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vessel | Desktop WebGL Build</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0d0d0d;
+      --panel: #171717;
+      --text: #e8e8e8;
+      --muted: #aaaaaa;
+      --accent: #f2b35d;
+      --border: #343434;
+    }
 
-      .portfolio-container {
-        max-width: 1000px !important;
-        margin: 0 auto !important;
-        padding: 30px 20px 80px 20px !important;
-        box-sizing: border-box !important;
-      }
+    * { box-sizing: border-box; }
 
-      /* Header */
-      .site-header {
-        border-bottom: 1px solid #30363d !important;
-        padding-bottom: 20px !important;
-        margin-bottom: 24px !important;
-        display: flex !important;
-        justify-content: space-between !important;
-        align-items: center !important;
-        flex-wrap: wrap !important;
-        gap: 15px !important;
-      }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Arial, "Noto Sans KR", sans-serif;
+    }
 
-      .site-header h1 {
-        margin: 0 0 6px 0 !important;
-        font-size: 2.2rem !important;
-        color: #ffffff !important;
-        letter-spacing: -0.5px !important;
-      }
+    .page {
+      width: min(1100px, 100%);
+      margin: 0 auto;
+      padding: 28px 18px 48px;
+    }
 
-      .site-header .subtitle {
-        margin: 0 !important;
-        font-size: 1.05rem !important;
-        color: #8b949e !important;
-      }
+    header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
 
-      .badge-group {
-        display: flex !important;
-        gap: 8px !important;
-        flex-wrap: wrap !important;
-      }
+    h1 {
+      margin: 0 0 8px;
+      font-size: clamp(2rem, 5vw, 3.25rem);
+      letter-spacing: 0.06em;
+    }
 
-      .badge {
-        background-color: #21262d !important;
-        border: 1px solid #30363d !important;
-        padding: 5px 12px !important;
-        border-radius: 6px !important;
-        font-size: 0.85rem !important;
-        font-weight: 600 !important;
-        color: #58a6ff !important;
-      }
+    .subtitle {
+      margin: 0;
+      color: var(--muted);
+    }
 
-      /* Game Frame Override */
-      .game-frame {
-        width: 100% !important;
-        display: flex !important;
-        justify-content: center !important;
-        background: #000000 !important;
-        border: 1px solid #30363d !important;
-        border-radius: 8px !important;
-        overflow: hidden !important;
-        margin-bottom: 30px !important;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6) !important;
-        position: relative !important;
-      }
+    .platform-notice {
+      margin: 18px auto 24px;
+      max-width: 760px;
+      padding: 12px 16px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--panel);
+      text-align: center;
+      line-height: 1.5;
+    }
 
-      #unity-container {
-        position: relative !important;
-        left: auto !important;
-        top: auto !important;
-        transform: none !important;
-        margin: 0 auto !important;
-      }
+    .platform-notice strong { color: var(--accent); }
 
-      #unity-canvas {
-        display: block !important;
-        background: #000000 !important;
-      }
+    .platform-notice a {
+      color: var(--accent);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
 
-      /* Info Cards Grid */
-      .content-grid {
-        display: grid !important;
-        grid-template-columns: 1fr 1fr !important;
-        gap: 20px !important;
-        margin-bottom: 30px !important;
-      }
+    .game-shell {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: #000;
+      border: 1px solid var(--border);
+    }
 
-      @media (max-width: 768px) {
-        .content-grid {
-          grid-template-columns: 1fr !important;
-        }
-      }
+    #unity-canvas {
+      width: 100%;
+      height: 100%;
+      background: #000;
+      display: block;
+    }
 
-      .card {
-        background-color: #161b22 !important;
-        border: 1px solid #30363d !important;
-        border-radius: 8px !important;
-        padding: 24px !important;
-        box-sizing: border-box !important;
-      }
+    #unity-loading-bar {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: min(360px, 75%);
+      transform: translate(-50%, -50%);
+      text-align: center;
+    }
 
-      .card h2 {
-        margin-top: 0 !important;
-        font-size: 1.25rem !important;
-        color: #ffffff !important;
-        border-bottom: 1px solid #30363d !important;
-        padding-bottom: 12px !important;
-        margin-bottom: 16px !important;
-      }
+    #unity-progress-bar-empty {
+      width: 100%;
+      height: 16px;
+      border: 1px solid #888;
+      background: #252525;
+    }
 
-      /* Keybinding Table */
-      .key-table {
-        width: 100% !important;
-        border-collapse: collapse !important;
-      }
+    #unity-progress-bar-full {
+      width: 0;
+      height: 100%;
+      background: var(--accent);
+    }
 
-      .key-table td {
-        padding: 8px 0 !important;
-        border-bottom: 1px solid #21262d !important;
-        font-size: 0.92rem !important;
-      }
+    #unity-warning {
+      position: absolute;
+      left: 12px;
+      right: 12px;
+      top: 12px;
+      z-index: 2;
+    }
 
-      .key-table td:last-child {
-        text-align: right !important;
-      }
+    .content {
+      margin-top: 28px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--panel);
+      line-height: 1.65;
+    }
 
-      kbd {
-        background-color: #21262d !important;
-        border: 1px solid #30363d !important;
-        box-shadow: inset 0 -1px 0 #30363d !important;
-        padding: 3px 8px !important;
-        border-radius: 4px !important;
-        font-family: monospace !important;
-        font-size: 0.85rem !important;
-        color: #58a6ff !important;
-        margin-left: 2px !important;
-      }
+    .content h2 {
+      margin-top: 0;
+      color: var(--accent);
+    }
 
-      /* Footer */
-      .site-footer {
-        border-top: 1px solid #30363d !important;
-        padding-top: 20px !important;
-        text-align: center !important;
-        color: #8b949e !important;
-        font-size: 0.9rem !important;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="portfolio-container">
-      
-      <!-- Top Header & Badges -->
-      <header class="site-header">
-        <div>
-          <h1>VESSEL (베셀)</h1>
-          <p class="subtitle">2D Top-Down Action RPG / Card Liberation Combat Prototype</p>
-        </div>
-        <div class="badge-group">
-          <span class="badge">Unity 6 (6000.x)</span>
-          <span class="badge">TopDown Engine</span>
-          <span class="badge">WebGL Build</span>
-        </div>
-      </header>
+    .controls {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 14px 0 22px;
+    }
 
-      <!-- Unity Game Viewport -->
-      <div class="game-frame">
-        <div id="unity-container" class="unity-desktop">
-          <canvas id="unity-canvas" width="960" height="600" tabindex="-1"></canvas>
-          <div id="unity-loading-bar">
-            <div id="unity-logo"></div>
-            <div id="unity-progress-bar-empty">
-              <div id="unity-progress-bar-full"></div>
-            </div>
-          </div>
-          <div id="unity-warning"> </div>
-          <div id="unity-footer">
-            <div id="unity-logo-title-footer"></div>
-            <div id="unity-fullscreen-button"></div>
-            <div id="unity-build-title">Vessel</div>
-          </div>
-        </div>
-      </div>
+    .controls th,
+    .controls td {
+      padding: 10px;
+      border: 1px solid var(--border);
+      text-align: left;
+    }
 
-      <!-- Controls & Overview Cards -->
-      <div class="content-grid">
-        
-        <!-- Controls Card -->
-        <div class="card">
-          <h2>🎮 Controls (조작 가이드)</h2>
-          <table class="key-table">
-            <tr>
-              <td>8-Way Movement (이동)</td>
-              <td><kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd></td>
-            </tr>
-            <tr>
-              <td>Run (달리기)</td>
-              <td><kbd>Left Shift</kbd></td>
-            </tr>
-            <tr>
-              <td>Dodge Roll (구르기 회피)</td>
-              <td><kbd>F</kbd></td>
-            </tr>
-            <tr>
-              <td>Liberate Card (제단 상호작용)</td>
-              <td><kbd>Spacebar</kbd></td>
-            </tr>
-            <tr>
-              <td>Drop Weapon (무기 버리기)</td>
-              <td><kbd>Q</kbd></td>
-            </tr>
-            <tr>
-              <td>Swap Weapon (무기 교체)</td>
-              <td><kbd>T</kbd></td>
-            </tr>
-            <tr>
-              <td>Aim & Attack (조준 및 공격)</td>
-              <td><kbd>Left Click</kbd> / <kbd>Mouse</kbd></td>
-            </tr>
-            <tr>
-              <td>Pause Menu (일시정지)</td>
-              <td><kbd>ESC</kbd></td>
-            </tr>
-          </table>
-        </div>
+    .controls th {
+      width: 55%;
+      color: var(--text);
+      background: #202020;
+    }
 
-        <!-- Project Overview Card -->
-        <div class="card">
-          <h2>📖 Prototype Overview (기획 개요)</h2>
-          <p style="margin-top: 0; font-size: 0.95rem; line-height: 1.6;">
-            <strong>Vessel</strong>은 고대 유적 '아르카디오' 지하에서 깨어난 빈 인간 육체 <strong>'Deck'</strong>이 되어, 던전에 봉인된 자아를 가진 무기 카드들을 구출하고 실시간으로 무기를 교체하며 싸워나가는 2D 탑다운 액션 프로토타입입니다.
-          </p>
-          <ul style="padding-left: 20px; margin-bottom: 0; font-size: 0.9rem; line-height: 1.6;">
-            <li><strong>Room 1</strong>: 젬 수집, 제단 해방(검 카드 획득), 1차 골렘 전투</li>
-            <li><strong>Room 2</strong>: 360도 마우스 조준 활(Bow) 원거리 사격 및 무기 스왑</li>
-            <li><strong>Room 3</strong>: 붉은 레이저 차징 돌진 패턴의 보스 골렘 격파</li>
-          </ul>
-        </div>
+    .controls td { color: var(--accent); }
 
-      </div>
+    .footer-note {
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
 
-      <!-- Footer -->
-      <footer class="site-footer">
-        <p>Project Vessel &copy; 2026 Developed by BeeKeeperTK. Built with Unity 6 & More Mountains TopDown Engine.</p>
-      </footer>
+    @media (max-width: 640px) {
+      .page { padding: 18px 10px 32px; }
+      .content { padding: 16px; }
+      .controls th { width: auto; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header>
+      <h1>VESSEL</h1>
+      <p class="subtitle">2D Top-Down Action Prototype</p>
+    </header>
 
+    <div class="platform-notice">
+      <strong>Desktop version</strong> — Keyboard and mouse recommended.<br>
+      Playing on a phone or tablet? <a href="https://REPLACE-WITH-YOUR-MOBILE-BUILD-URL">Open the mobile version →</a>
     </div>
 
-    <!-- Unity Loader Script -->
-    <script>
-      var canvas = document.querySelector("#unity-canvas");
+    <section class="game-shell" aria-label="Vessel desktop WebGL game">
+      <canvas id="unity-canvas" tabindex="-1"></canvas>
+      <div id="unity-loading-bar">
+        <p>Loading Vessel…</p>
+        <div id="unity-progress-bar-empty"><div id="unity-progress-bar-full"></div></div>
+      </div>
+      <div id="unity-warning"></div>
+    </section>
 
-      function unityShowBanner(msg, type) {
-        var warningBanner = document.querySelector("#unity-warning");
-        function updateBannerView() {
-          warningBanner.style.display = warningBanner.children.length ? 'block' : 'none';
-        }
-        var div = document.createElement('div');
-        div.innerHTML = msg;
-        warningBanner.appendChild(div);
-        if (type == 'error') div.style = 'background: red; padding: 10px;';
-        else {
-          if (type == 'info') div.style = 'background: yellow; color: black; padding: 10px;';
-          setTimeout(function() {
-            warningBanner.removeChild(div);
-            updateBannerView();
-          }, 5000);
-        }
-        updateBannerView();
-      }
+    <section class="content">
+      <h2>Controls / 조작법</h2>
+      <table class="controls">
+        <tbody>
+          <tr><th>8-Way Movement (이동)</th><td>WASD</td></tr>
+          <tr><th>Run (달리기)</th><td>Left Shift</td></tr>
+          <tr><th>Dodge Roll (구르기 회피)</th><td>F</td></tr>
+          <tr><th>Liberate Card (제단 상호작용)</th><td>Spacebar</td></tr>
+          <tr><th>Drop Weapon (무기 버리기)</th><td>Q</td></tr>
+          <tr><th>Swap Weapon / Replenish Arrows (무기 교체 / 화살 보충)</th><td>T</td></tr>
+          <tr><th>Attack (공격)</th><td>Left Mouse Button</td></tr>
+          <tr><th>Pause Menu (일시정지)</th><td>ESC</td></tr>
+        </tbody>
+      </table>
 
-      var buildUrl = "Build";
-      var loaderUrl = buildUrl + "/Vessel_WebuildV1.0.loader.js";
-      var config = {
-        arguments: [],
-        dataUrl: buildUrl + "/Vessel_WebuildV1.0.data",
-        frameworkUrl: buildUrl + "/Vessel_WebuildV1.0.framework.js",
-        codeUrl: buildUrl + "/Vessel_WebuildV1.0.wasm",
-        streamingAssetsUrl: "StreamingAssets",
-        companyName: "DefaultCompany",
-        productName: "Vessel",
-        productVersion: "1.0",
-        showBanner: unityShowBanner,
-      };
+      <p><strong>Vessel</strong> 은 고대 유적 지하에서 깨어난 빈 인간 육체 <strong>'Deck'</strong> 이 되어, 던전에 봉인된 자아를 가진 무기 카드들을 구출하고 실시간으로 무기를 교체하며 싸워나가는 2D 탑다운 액션 프로토타입입니다.</p>
+      <p class="footer-note">This page hosts the desktop WebGL build. Use the mobile link above for the touch-oriented build.</p>
+    </section>
+  </main>
 
-      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-        var meta = document.createElement('meta');
-        meta.name = 'viewport';
-        meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
-        document.getElementsByTagName('head')[0].appendChild(meta);
-        document.querySelector("#unity-container").className = "unity-mobile";
-        canvas.className = "unity-mobile";
-      } else {
-        canvas.style.width = "960px";
-        canvas.style.height = "600px";
-      }
 
-      document.querySelector("#unity-loading-bar").style.display = "block";
+  <script>
+    const buildUrl = "Build";
+    const loaderUrl = buildUrl + "/Vessel_WebuildV1.0.loader.js";
+    const config = {
+      dataUrl: buildUrl + "/Vessel_WebuildV1.0.data",
+      frameworkUrl: buildUrl + "/Vessel_WebuildV1.0.framework.js",
+      codeUrl: buildUrl + "/Vessel_WebuildV1.0.wasm",
+      streamingAssetsUrl: "StreamingAssets",
+      companyName: "Embertkin",
+      productName: "Vessel",
+      productVersion: "1.0",
+       showBanner: unityShowBanner,
+    };
 
-      var script = document.createElement("script");
-      script.src = loaderUrl;
-      script.onload = () => {
-        createUnityInstance(canvas, config, (progress) => {
-          document.querySelector("#unity-progress-bar-full").style.width = 100 * progress + "%";
-        }).then((unityInstance) => {
-          document.querySelector("#unity-loading-bar").style.display = "none";
-          document.querySelector("#unity-fullscreen-button").onclick = () => {
-            unityInstance.SetFullscreen(1);
-          };
-        }).catch((message) => {
-          alert(message);
-        });
-      };
+    const canvas = document.querySelector("#unity-canvas");
+    const loadingBar = document.querySelector("#unity-loading-bar");
+    const progressBarFull = document.querySelector("#unity-progress-bar-full");
+    const warningBanner = document.querySelector("#unity-warning");
 
-      document.body.appendChild(script);
-    </script>
-  </body>
+    function unityShowBanner(message, type) {
+      const div = document.createElement("div");
+      div.textContent = message;
+      div.style.cssText = "padding:10px;margin-bottom:8px;border-radius:4px;color:#fff;background:" +
+        (type === "error" ? "#9b2020" : "#8a6518") + ";";
+      warningBanner.appendChild(div);
+      if (type !== "error") setTimeout(() => div.remove(), 5000);
+    }
+
+    const script = document.createElement("script");
+    script.src = loaderUrl;
+    script.onload = () => {
+      createUnityInstance(canvas, config, (progress) => {
+        progressBarFull.style.width = (100 * progress) + "%";
+      }).then(() => {
+        loadingBar.style.display = "none";
+      }).catch((message) => {
+        unityShowBanner(message, "error");
+      });
+    };
+    document.body.appendChild(script);
+  </script>
+</body>
 </html>
